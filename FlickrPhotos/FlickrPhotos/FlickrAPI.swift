@@ -13,7 +13,7 @@ enum Method: String {
 }
 
 struct FlickrAPI {
-    private static let baseURLString = "https://api.flickr.com/services.rest"
+    private static let baseURLString = "https://api.flickr.com/services/rest"
     private static let apiKey = "7d70893aeadad608a34e0780949e1c10"
     
     static var interestingPhotosURL: URL {
@@ -44,6 +44,7 @@ struct FlickrAPI {
             }
         }
         components.queryItems = queryItems
+        print(components.url)
         return components.url!
     }
 }
