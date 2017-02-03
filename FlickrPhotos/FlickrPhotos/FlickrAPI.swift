@@ -12,6 +12,10 @@ enum Method: String {
     case interestingPhotos = "flickr.interestingness.getList"
 }
 
+enum FlickrError: Error {
+    case invalidJSONData
+}
+
 struct FlickrAPI {
     private static let baseURLString = "https://api.flickr.com/services/rest"
     private static let apiKey = "7d70893aeadad608a34e0780949e1c10"
@@ -30,7 +34,7 @@ struct FlickrAPI {
             "format": "json",
             "nojsoncallback": "1",
             "api_key": apiKey,
-        ]
+            ]
         
         for (key, value) in baseParams {
             let item = URLQueryItem(name: key, value: value)
@@ -46,6 +50,24 @@ struct FlickrAPI {
         components.queryItems = queryItems
         print(components.url)
         return components.url!
+    }
+    
+    private static func photos(fromJSON data: Data) -> PhotosResult {
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
+            
+            guard let jsonDictionary = jsonObject as? [AnyHashable: Any],
+                let photos = jsonDictionary["photos"] as? [String: Any],
+                let photosArray = photos["photo"] as? [[String: Any]] else {
+                    // the json structure doesn't match our expectations
+                    return .failure(FlickrError.invalidJSONData)
+            }
+            
+            var finalPhotos = [Photo]()
+            return .success(finalPhotos)
+        } catch let error {
+            return .failure(error)
+        }
     }
 }
 
