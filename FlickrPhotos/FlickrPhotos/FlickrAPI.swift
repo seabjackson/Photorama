@@ -8,17 +8,25 @@
 
 import Foundation
 
-enum Method: String {
-    case interestingPhotos = "flickr.interestingness.getList"
-}
-
 enum FlickrError: Error {
     case invalidJSONData
+}
+
+
+enum Method: String {
+    case interestingPhotos = "flickr.interestingness.getList"
 }
 
 struct FlickrAPI {
     private static let baseURLString = "https://api.flickr.com/services/rest"
     private static let apiKey = "7d70893aeadad608a34e0780949e1c10"
+  
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        return formatter
+    }()
+    
     
     static var interestingPhotosURL: URL {
         return flickrURL(method: .interestingPhotos, parameters: ["extras": "url_h,date_taken"])
@@ -48,15 +56,15 @@ struct FlickrAPI {
             }
         }
         components.queryItems = queryItems
-        print(components.url)
         return components.url!
     }
     
-    private static func photos(fromJSON data: Data) -> PhotosResult {
+    static func photos(fromJSON data: Data) -> PhotosResult {
         do {
             let jsonObject = try JSONSerialization.jsonObject(with: data, options: [])
             
-            guard let jsonDictionary = jsonObject as? [AnyHashable: Any],
+            guard
+                let jsonDictionary = jsonObject as? [AnyHashable: Any],
                 let photos = jsonDictionary["photos"] as? [String: Any],
                 let photosArray = photos["photo"] as? [[String: Any]] else {
                     // the json structure doesn't match our expectations
@@ -64,10 +72,48 @@ struct FlickrAPI {
             }
             
             var finalPhotos = [Photo]()
+            print(photosArray)
+            
+            for photoJSON in photosArray {
+                if let photo = photo(fromJSON: photoJSON) {
+                    finalPhotos.append(photo)
+                    print("I added a photo")
+                } else {
+                    print("I didn't get to add the photo")
+                }
+            }
+            
+            print("Number of photos is \(finalPhotos.count)")
+            
+            if finalPhotos.isEmpty && !photosArray.isEmpty {
+                // we aren't able to parse any of the photos
+                // maybe the JSON format for photos has changed
+                print("the final photos is empty")
+                return .failure(FlickrError.invalidJSONData)
+            }
+            
+            print("I got photos in my final photos array")
+            
             return .success(finalPhotos)
         } catch let error {
             return .failure(error)
         }
+    }
+    
+    private static func photo(fromJSON json: [String: Any]) -> Photo? {
+        guard
+            let photoID = json["id"] as? String,
+            let title = json["title"] as? String,
+            let dateString = json["datetaken"] as? String,
+            let photoURLString = json["url_h"] as? String,
+            let url = URL(string: photoURLString),
+            let dateTaken = dateFormatter.date(from: dateString) else {
+                // don't have enough information to construct a Photo
+            print("Cannot construct photo")
+                return nil
+        }
+        
+        return Photo(title: title, photoID: photoID, remoteURL: url, dateTaken: dateTaken)
     }
 }
 
