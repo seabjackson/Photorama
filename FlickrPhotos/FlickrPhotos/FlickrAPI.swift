@@ -77,22 +77,14 @@ struct FlickrAPI {
             for photoJSON in photosArray {
                 if let photo = photo(fromJSON: photoJSON) {
                     finalPhotos.append(photo)
-                    print("I added a photo")
-                } else {
-                    print("I didn't get to add the photo")
                 }
             }
-            
-            print("Number of photos is \(finalPhotos.count)")
             
             if finalPhotos.isEmpty && !photosArray.isEmpty {
                 // we aren't able to parse any of the photos
                 // maybe the JSON format for photos has changed
-                print("the final photos is empty")
                 return .failure(FlickrError.invalidJSONData)
             }
-            
-            print("I got photos in my final photos array")
             
             return .success(finalPhotos)
         } catch let error {
