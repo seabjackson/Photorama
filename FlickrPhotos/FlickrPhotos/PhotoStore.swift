@@ -27,6 +27,16 @@ class PhotoStore {
     
     let imageStore = ImageStore()
     
+    let persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "Photorama")
+        container.loadPersistentStores { (description, error) in
+            if let error = error {
+                print("Error setting up Core Data (\(error)).")
+            }
+        }
+        return container        
+    }()
+    
     private let session: URLSession = {
        let config = URLSessionConfiguration.default
         return URLSession(configuration: config)
@@ -78,7 +88,7 @@ class PhotoStore {
             return .failure(error!)
         }
         
-        return FlickrAPI.photos(fromJSON: jsonData)
+        return FlickrAPI.photos(fromJSON: jsonData, into: persistentContainer.viewContext)
     }
     
     private func processImageRequest(data: Data?, error: Error?) -> ImageResult {
