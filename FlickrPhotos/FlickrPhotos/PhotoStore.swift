@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreData
 
 enum PhotosResult {
     case success([Photo])
@@ -45,15 +46,20 @@ class PhotoStore {
     
     // download the image data from the remote url provided by the json
     func fetchImage(for photo: Photo, completion: @escaping (ImageResult) -> Void) {
-        let photoKey = photo.photoID
+        guard let photoKey = photo.photoID else {
+            preconditionFailure("Photo expected to have a photoID")
+        }
+        
         if let image = imageStore.image(forKey: photoKey) {
             OperationQueue.main.addOperation {
                 completion(.success(image))
             }
             return
         }
-        let photoURL = photo.remoteURL
-        let request = URLRequest(url: photoURL)
+        guard let photoURL = photo.remoteURL else {
+            preconditionFailure("Photo expected to have a remote URL.")
+        }
+        let request = URLRequest(url: photoURL) as URL
         
         let task = session.dataTask(with: request) { (data, response, error) in
             let result = self.processImageRequest(data: data, error: error)
