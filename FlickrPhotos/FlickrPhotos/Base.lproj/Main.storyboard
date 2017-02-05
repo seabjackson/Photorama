@@ -31,14 +31,34 @@
                                     <inset key="sectionInset" minX="2" minY="2" maxX="2" maxY="2"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="UICollectionViewCell" id="65s-nI-pcP">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="PhotoCollectionViewCell" id="65s-nI-pcP" customClass="PhotoCollectionViewCell" customModule="FlickrPhotos" customModuleProvider="target">
                                         <rect key="frame" x="2" y="2" width="90" height="90"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
                                             <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="58W-Z5-4M3">
+                                                    <rect key="frame" x="0.0" y="0.0" width="90" height="90"/>
+                                                </imageView>
+                                                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="Xwg-aS-zox">
+                                                    <rect key="frame" x="35" y="35" width="20" height="20"/>
+                                                </activityIndicatorView>
+                                            </subviews>
                                         </view>
                                         <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                        <constraints>
+                                            <constraint firstItem="Xwg-aS-zox" firstAttribute="centerX" secondItem="65s-nI-pcP" secondAttribute="centerX" id="HmR-1F-Fhn"/>
+                                            <constraint firstAttribute="bottom" secondItem="58W-Z5-4M3" secondAttribute="bottom" id="Q7q-0i-mgP"/>
+                                            <constraint firstItem="Xwg-aS-zox" firstAttribute="centerY" secondItem="65s-nI-pcP" secondAttribute="centerY" id="ZkS-Df-1qf"/>
+                                            <constraint firstAttribute="trailing" secondItem="58W-Z5-4M3" secondAttribute="trailing" id="bRU-al-tHT"/>
+                                            <constraint firstItem="58W-Z5-4M3" firstAttribute="leading" secondItem="65s-nI-pcP" secondAttribute="leading" id="dYS-Wp-lpT"/>
+                                            <constraint firstItem="58W-Z5-4M3" firstAttribute="top" secondItem="65s-nI-pcP" secondAttribute="top" id="lgd-1G-Osg"/>
+                                        </constraints>
+                                        <connections>
+                                            <outlet property="imageView" destination="58W-Z5-4M3" id="UJe-qg-rgM"/>
+                                            <outlet property="spinner" destination="Xwg-aS-zox" id="yxY-1n-9N1"/>
+                                        </connections>
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
