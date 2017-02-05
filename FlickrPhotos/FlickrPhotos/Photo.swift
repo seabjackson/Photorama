@@ -20,4 +20,12 @@ class Photo {
         self.remoteURL = remoteURL
         self.dateTaken = dateTaken
     }
+    
+}
+
+extension Photo: Equatable {
+    
+    static func ==(lhs: Photo, rhs: Photo) -> Bool {
+        return lhs.photoID == rhs.photoID
+    }
 }
